@@ -64,28 +64,37 @@ class World(object):
 		'''
 		pass
 	
-	def command(self, inpt):
-		inpt = inpt.strip().lower()
-		loc_cmd_exit = self.location.command(inpt)
+	def prompt_command(self, raw):
+		if raw.startswith(':'):
+			self.on_debug_command(raw[1:])
+		com = Command(raw)
+		self.command(com)
+	
+	def on_debug_command(self, cmd):
+		if cmd == 'room':
+			print(self.location)
+		else:
+			print("Debug command %s not found" % cmd.action)
+		
+	def command(self, cmd):
+		loc_cmd_exit = self.location.command(cmd)
 
 		if loc_cmd_exit:
 			return False
 
-		words = inpt.split(" ")
-		cmd = words[0]
-
-		if cmd == 'go':
-			direction = words[1]
+		if cmd.action == 'go':
+			direction = cmd.target
 			r = self.enterRoom(
 				self.location.go.get(direction, None)
 			)
 			if r is None:
 				print("No.")
 			return True
-		elif cmd == 'look':
+		elif cmd.action == 'look':
+			# TODO: examine object, if specified
 			self.location.onLook()
 			return True
-		elif cmd == 'autolook':
+		elif cmd.action == 'autolook':
 			self.autolook = not self.autolook
 			print(
 				"Autolook turned",
@@ -96,7 +105,7 @@ class World(object):
 	def startGame(self):
 		self.intro()
 		while True:
-			self.command(input(self.prompt))
+			self.prompt_command(input(self.prompt))
 
 
 class Room(object):
@@ -128,6 +137,49 @@ class Room(object):
 		'''
 		return False
 
+
+class Command(object):
+	def __init__(self, raw):
+		words = raw.split(" ")
+
+		# TODO: special parsing for words like "the"
+		
+		action = words.pop(0)
+		preposition, target, object_used = [None] * 3
+
+		if len(words) == 1:
+			# Used for verb-target commands like "take captain" or "eat self"
+			target = words[0]
+		elif len(words) == 2:
+			# For commands like "stand on table" or "look inside soul"
+			preposition, target = words
+		elif len(words) == 3:
+			# Used for commands like "drop cat in bag"
+			# TODO:	Some commands may have swapped object_used and target
+			#		For instance, "fill bag with cat"
+			#		It likely can be determined by preposition.
+			object_used, preposition, target = words
+
+		self.action = action
+		
+		# TODO: convert preposition to an ideal synonym
+		self.preposition = preposition
+
+		self.target = target
+		self.object_used = object_used
+		self.raw = raw
+	
+	def match(self, action=None, target=None, object_used=None, preposition=None):
+		if action and self.action != action:
+			return False
+		if target and self.target != target:
+			return False
+		if preposition and self.preposition != preposition:
+			return False
+		if object_used and self.object_used != object_used:
+			return False
+		return True
+		
 
 class Item(object):
 	pass

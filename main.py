@@ -1,8 +1,7 @@
 import sys
-from random import random
 from engine import World
 
-# TODO: Add confidence check at some point. 
+# TODO: Add confidence check at some point.
 
 # This game needs to suck, so all prints are capitalized.
 #ProperTechnique
@@ -37,23 +36,19 @@ class Game(World):
 		from rooms import Room_brig
 		self.enterRoom(Room_brig)
 	
-	def command(self, inpt):
-		inpt = inpt.strip().lower()
-		words = inpt.split(" ")
-		cmd = words[0]
-		
-		if cmd == 'win':
+	def command(self, cmd):
+		if cmd.action == 'win':
 			if self.name == 'dikfuk':
 				winGame()
 			else:
 				print("No.")
 			return True
-		elif cmd == 'yes':
+		elif cmd.action == 'yes':
 			print('No.')
-		elif cmd == 'no':
+		elif cmd.action == 'no':
 			print('Yes.')
 
-		return super().command(inpt)
+		return super().command(cmd)
 
 # Start the game
 if __name__ == '__main__':

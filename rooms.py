@@ -1,4 +1,6 @@
 from engine import Room
+from random import random
+from main import winGame
 import items
 
 
@@ -9,7 +11,7 @@ class Room_brig(Room):
 	def __init__(self):
 		super().__init__()
 		self.go = {
-			'north':  Room_hallway_01,
+			'north':  Room_hallway_00,
 		}
 		self.westcount = 0
 		self.captain_here = True
@@ -34,7 +36,7 @@ class Room_brig(Room):
 		# This class doesn't consider "go west" to be
 		# a valid command, though, so you get the default
 		# message upon walking into walls.
-		if cmd == 'go west':
+		if cmd.match('go', 'west'):
 			self.westcount += 1
 			if self.westcount >= 7:
 				winGame()
@@ -52,7 +54,7 @@ class Room_hallway_00(Room):
 		super().__init__()
 		self.go = {
 			'south': Room_brig,
-			'north': Room_hallway_02,
+			'north': Room_hallway_01,
 		}
 
 	def onEnter(self):
@@ -67,13 +69,14 @@ class Room_hallway_01(Room):
 	def __init__(self):
 		super().__init__()
 		self.go = {
-			'south': Room_hallway_01,
+			'south': Room_hallway_00,
 			'east': Room_gunroom,
 		}
 
 
 class Room_gunroom(Room):
 	description = "The room before you is as cold as the cell, though the walls are a pale fuschia. In the center, sits a table. It looks like it could bear a fairly heavy load, but you wouldn't be confident standing on it."
+	name = "gun room"
 
 	def __init__(self):
 		super().__init__()
@@ -86,7 +89,7 @@ class Room_gunroom(Room):
 		}
 
 	def command(self, cmd):
-		if cmd == 'stand on table':
+		if cmd.match('stand', 'table'):
 			print("It collapses.  Your confidence, that is.  The table is otherwise unharmed.")
 			self.world['confidence'] -= 1
 			return True
