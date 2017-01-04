@@ -5,13 +5,13 @@ from engine import World
 
 # This game needs to suck, so all prints are capitalized.
 #ProperTechnique
-'''
+#'''
 import builtins
 __oldprint = print
 def print(*args, **kwargs):
 	__oldprint((" ".join(map(str, args)).upper()), **kwargs)
 builtins.print = print
-'''
+#'''
 
 
 def winGame():
