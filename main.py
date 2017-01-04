@@ -5,13 +5,13 @@ from engine import World
 
 # This game needs to suck, so all prints are capitalized.
 #ProperTechnique
-#'''
+'''
 import builtins
 __oldprint = print
 def print(*args, **kwargs):
 	__oldprint((" ".join(map(str, args)).upper()), **kwargs)
 builtins.print = print
-#'''
+'''
 
 
 def winGame():
@@ -50,6 +50,12 @@ class Game(World):
 
 		return super().command(cmd)
 
-# Start the game
-if __name__ == '__main__':
-	Game().startGame()
+game = None
+
+
+def main():
+	game = Game()
+	game.startGame()
+
+if __name__ == "__main__":
+	main()
