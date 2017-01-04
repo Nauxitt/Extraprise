@@ -50,6 +50,12 @@ class Game(World):
 
 		return super().command(cmd)
 
-# Start the game
-if __name__ == '__main__':
-	Game().startGame()
+game = None
+
+
+def main():
+	game = Game()
+	game.startGame()
+
+if __name__ == "__main__":
+	main()
